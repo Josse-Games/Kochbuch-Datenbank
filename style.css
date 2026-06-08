@@ -191,6 +191,29 @@ div.header p{
     scale: 0.9;
 }
 
+#backButton{
+    height: 2.2em;
+    width: 2.2em;
+    background-color: rgb(70, 70, 70);
+    border: 0px;
+    z-index: 99999999;
+    border-radius: 20px;
+    color: white;
+    font-size: 2em;
+    margin-bottom: 1.5em;
+    margin-top: auto;
+    margin-right: 1.2em;
+    margin-left: auto;
+    text-align: center;
+    transition: all 0.03s ease-in-out;
+}
+#backButton:hover{
+    scale: 1.1;
+}
+#backButton:active{
+    scale: 0.9;
+}
+
 #BLUR{
     display: flex;
     position: fixed;
@@ -199,13 +222,23 @@ div.header p{
     justify-content: center;
     height: 100%;
     width: 100%;
-    z-index: 999999999;
+    z-index: -5;
     background-color: rgba(0, 0, 0, 0.212);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
+    opacity: 0;
+    transition: all 0.1s ease-in-out;
+
+}
+#BLUR.visible{
+    opacity: 1;
+    z-index: 999999999;
 }
 #ADD{
     display: flex;
+    position: fixed;
+    align-items: center;
+    flex-direction: column;
     background-color: rgb(70, 70, 70);
     width: 32em;
     max-width: 80vw;
@@ -213,7 +246,31 @@ div.header p{
     max-height: 80vh;
     border-radius: 20px;
     overflow: hidden;
-    z-index: 999999999;
+}
+
+#RezeptName{
+    height: 3em;
+    width: 90%;
+    border-radius: 10px;
+    border: 0px;
+    font-size: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: bolder;
+    padding-left: 1em;
+    margin-bottom: 1.5em;
+    margin-top: 2em;
+}
+#Rezept{
+    height: 30em;
+    width: 90%;
+    border-radius: 10px;
+    border: 0px;
+    font-size: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: normal;
+    padding-left: 1em;
+    resize: vertical;
+    padding-top: 0.8em;
 }
 
 
