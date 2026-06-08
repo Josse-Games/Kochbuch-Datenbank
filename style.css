@@ -260,6 +260,7 @@ div.header p{
     margin-bottom: 1.5em;
     margin-top: 2em;
 }
+
 #Rezept{
     height: 30em;
     width: 90%;
@@ -271,6 +272,46 @@ div.header p{
     padding-left: 1em;
     resize: vertical;
     padding-top: 0.8em;
+}
+
+#Zutaten{
+    width: 100%;
+    height: fit-content;
+    margin-bottom: 1.5em;
+}
+#zutatHINZF{
+    margin-left: 5%;
+    margin-right: auto;
+    border-radius: 10px;
+    border: 0px;
+    width: 3em;
+    height: 3em;
+    background-color: white;
+    font-weight: bold;
+    transition: all 0.03s ease-in-out;
+}
+#zutatHINZF:hover{
+    scale: 1.1;
+}
+#zutatHINZF:active{
+    scale: 0.9;
+}
+#zutatENTF{
+    margin-left: 5%;
+    margin-right: auto;
+    border-radius: 10px;
+    border: 0px;
+    width: 3em;
+    height: 3em;
+    background-color: white;
+    font-weight: bold;
+    transition: all 0.03s ease-in-out;
+}
+#zutatENTF:hover{
+    scale: 1.1;
+}
+#zutatENTF:active{
+    scale: 0.9;
 }
 
 
