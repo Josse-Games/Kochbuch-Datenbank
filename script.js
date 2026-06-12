@@ -77,7 +77,7 @@ async function Check(){
         } else {
             const Input = document.getElementById("Password");
             Input.value = "";
-            Input.placeholder = "falsches Passwort";
+            Input.placeholder = "Passwort ungültig";
             Input.classList.add("wrong");
         }
     } catch (error) {

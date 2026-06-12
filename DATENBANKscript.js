@@ -27,7 +27,7 @@ async function ZutatHinzufügen() {
     NEUEzutat.placeholder = "Zutat " + Zutaten;
     NEUEzutat.className = "zutat-input";
     NEUEzutat.id = "Zutat" + Zutaten;
-    document.getElementById("Zutaten").appendChild(NEUEzutat);
+    document.getElementById("zut-list").appendChild(NEUEzutat);
 }
 
 async function ZutatEntfernen() {
