@@ -3,6 +3,7 @@ document.getElementById("addButton").addEventListener("click", Visibility);
 document.getElementById("backButton").addEventListener("click", Visibility);
 document.getElementById("zutatHINZF").addEventListener("click", ZutatHinzufügen);
 document.getElementById("zutatENTF").addEventListener("click", ZutatEntfernen);
+Laden();
 
 let VISIBLE = false;
 let Zutaten = 0;
@@ -66,7 +67,8 @@ function Save() {
         dauer: RezeptDauer,
         personen: RezeptPersonen,
         zutaten: zutatenArray.join(', '),
-        text: Rezept
+        text: Rezept,
+        ersteller: localStorage.getItem("Name")
     };
 
     fetch('rezeptSpeichern.php', {
@@ -96,5 +98,59 @@ function Save() {
         console.log('Verbindung zum Server fehlgeschlagen.');
     });
 }
-
 window.Save = Save;
+
+function Laden(){
+    fetch('rezeptAnzeigen.php')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Server-Antwort war nicht okay');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            Anzeigen(data.data);
+        } else {
+            console.error('Fehler vom Server:', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Netzwerkfehler beim Laden:', error);
+    });
+}
+
+function Anzeigen(rezepte){
+    const container = document.getElementById('AnzeigeRezepte');
+    container.innerHTML = '';
+
+    if (rezepte.length === 0) {
+        container.innerHTML = '<p>Keine Rezepte vorhanden.</p>';
+        return;
+    }
+
+    rezepte.forEach(rezept => {
+        const rezeptDiv = document.createElement('div');
+        rezeptDiv.className = 'rezeptKarte';
+
+        rezeptDiv.innerHTML = `
+            <h3>${escapeHTML(rezept.Rezeptname)}</h3>
+            <p><strong>Schwierigkeit:</strong> ${escapeHTML(rezept.Schwierigkeit)}</p>
+            <p><strong>Dauer:</strong> ${escapeHTML(rezept.Dauer)}</p>
+            <p><strong>Personen:</strong> ${parseInt(rezept.Personenanzahl)}</p>
+            <p><strong>Zutaten:</strong> ${escapeHTML(rezept.Zutaten)}</p>
+            <p><strong>Zubereitung:</strong><br>${escapeHTML(rezept.Rezept).replace(/\n/g, '<br>')}</p>
+            <p><strong>Ersteller:</strong> ${escapeHTML(rezept.Ersteller)}</p>
+        `;
+        
+        container.appendChild(rezeptDiv);
+    });
+}
+window.Laden = Laden;
+
+function escapeHTML(str) {
+    if (!str) return '';
+    return str.replace(/[&<>'"]/g, 
+        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '\'', '"': '&quot;' }[tag] || tag)
+    );
+}

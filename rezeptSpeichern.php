@@ -16,13 +16,14 @@ try {
     $personen      = intval($data['personen'] ?? 1);
     $zutaten       = $data['zutaten'] ?? '';
     $text          = $data['text'] ?? '';
+    $ersteller          = $data['ersteller'] ?? '';
 
     $db = new PDO('sqlite:Datenbank/Rezepte.db');
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $db->setAttribute(PDO::ATTR_TIMEOUT, 5); 
 
-    $sql = "INSERT INTO rezepte (Rezeptname, Schwierigkeit, Dauer, Personenanzahl, Zutaten, Rezept) 
-            VALUES (:Rezeptname, :Schwierigkeit, :Dauer, :Personenanzahl, :Zutaten, :Rezept)";
+    $sql = "INSERT INTO rezepte (Rezeptname, Schwierigkeit, Dauer, Personenanzahl, Zutaten, Rezept, Ersteller) 
+            VALUES (:Rezeptname, :Schwierigkeit, :Dauer, :Personenanzahl, :Zutaten, :Rezept, :Ersteller)";
     
     $stmt = $db->prepare($sql);
     
@@ -32,7 +33,8 @@ try {
         ':Dauer'         => $dauer,
         ':Personenanzahl'      => $personen,
         ':Zutaten'       => $zutaten,
-        ':Rezept'  => $text
+        ':Rezept'  => $text,
+        ':Ersteller'  => $ersteller
     ]);
 
     echo json_encode(['status' => 'success', 'message' => 'Erfolgreich gespeichert.']);
