@@ -82,6 +82,7 @@ function Save() {
     .then(data => {
         if (data.status === 'success') {
             console.log('Rezept erfolgreich gespeichert!');
+            Laden();
             
             document.getElementById('RezeptName').value = '';
             document.getElementById('RezeptDauer').value = '';
