@@ -140,7 +140,7 @@ function Anzeigen(rezepte, suchBegriff=""){
     container.innerHTML = '';
 
     if (rezepte.length === 0) {
-        container.innerHTML = '<p>Keine Rezepte vorhanden.</p>';
+        container.innerHTML = '';
         return;
     }
     
