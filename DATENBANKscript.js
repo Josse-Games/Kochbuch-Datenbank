@@ -3,6 +3,8 @@ document.getElementById("addButton").addEventListener("click", Visibility);
 document.getElementById("backButton").addEventListener("click", Visibility);
 document.getElementById("zutatHINZF").addEventListener("click", ZutatHinzufügen);
 document.getElementById("zutatENTF").addEventListener("click", ZutatEntfernen);
+document.getElementById("saveButton").addEventListener("click", Save);
+document.getElementById("Ausloggen").addEventListener("click", LogOut);
 Laden();
 
 let VISIBLE = false;
@@ -98,6 +100,8 @@ function Save() {
         console.error('Netzwerkfehler:', error);
         console.log('Verbindung zum Server fehlgeschlagen.');
     });
+
+    Visibility();
 }
 window.Save = Save;
 
@@ -111,7 +115,17 @@ function Laden(){
     })
     .then(data => {
         if (data.status === 'success') {
-            Anzeigen(data.data);
+            const suchFeld = document.getElementById("searchInput");
+            
+            if (suchFeld) {
+                suchFeld.replaceWith(suchFeld.cloneNode(true));
+                
+                document.getElementById("searchInput").addEventListener("input", function() {
+                    const aktuellerSuchText = this.value;
+                    Anzeigen(data.data, aktuellerSuchText);
+                });
+            }
+            Anzeigen(data.data, ""); 
         } else {
             console.error('Fehler vom Server:', data.message);
         }
@@ -121,7 +135,7 @@ function Laden(){
     });
 }
 
-function Anzeigen(rezepte){
+function Anzeigen(rezepte, suchBegriff=""){
     const container = document.getElementById('AnzeigeRezepte');
     container.innerHTML = '';
 
@@ -129,22 +143,34 @@ function Anzeigen(rezepte){
         container.innerHTML = '<p>Keine Rezepte vorhanden.</p>';
         return;
     }
-
+    
+    const suchText = suchBegriff.toLowerCase().trim();
+    
     rezepte.forEach(rezept => {
-        const rezeptDiv = document.createElement('div');
-        rezeptDiv.className = 'rezeptKarte';
+        const namePasst = rezept.Rezeptname ? rezept.Rezeptname.toLowerCase().includes(suchText) : false;
+        const zutatPasst = rezept.Zutaten ? rezept.Zutaten.toLowerCase().includes(suchText) : false;
+        const erstellerPasst = rezept.Ersteller ? rezept.Ersteller.toLowerCase().includes(suchText) : false;
+        const schwierigkeitPasst = rezept.Schwierigkeit ? rezept.Schwierigkeit.toLowerCase().includes(suchText) : false;
 
-        rezeptDiv.innerHTML = `
-            <h3>${escapeHTML(rezept.Rezeptname)}</h3>
-            <p><strong>Schwierigkeit:</strong> ${escapeHTML(rezept.Schwierigkeit)}</p>
-            <p><strong>Dauer:</strong> ${escapeHTML(rezept.Dauer)}</p>
-            <p><strong>Personen:</strong> ${parseInt(rezept.Personenanzahl)}</p>
-            <p><strong>Zutaten:</strong> ${escapeHTML(rezept.Zutaten)}</p>
-            <p><strong>Zubereitung:</strong><br>${escapeHTML(rezept.Rezept).replace(/\n/g, '<br>')}</p>
-            <p><strong>Ersteller:</strong> ${escapeHTML(rezept.Ersteller)}</p>
-        `;
-        
-        container.appendChild(rezeptDiv);
+        if (suchText === "" || namePasst || zutatPasst || erstellerPasst || schwierigkeitPasst) {
+            const rezeptDiv = document.createElement('div');
+            rezeptDiv.className = 'rezeptKarte';
+            rezeptDiv.addEventListener("click", ZUBEREITUNG);
+
+            rezeptDiv.innerHTML = `
+                <span class="TITEL"><strong>${escapeHTML(rezept.Rezeptname)}</strong></span>
+                <span><strong>Schwierigkeit:</strong> ${escapeHTML(rezept.Schwierigkeit)}</span>
+                <span><strong>Dauer:</strong> ${escapeHTML(rezept.Dauer)}</span>
+                <span><strong>Personen:</strong> ${parseInt(rezept.Personenanzahl)}</span>
+                <span><strong>Ersteller:</strong> ${escapeHTML(rezept.Ersteller)}</span>
+                <div class="REZEPT">
+                    <span><strong>Zutaten:</strong> ${escapeHTML(rezept.Zutaten)}</span>
+                    <span><strong>Zubereitung:</strong><br>${escapeHTML(rezept.Rezept).replace(/\n/g, '<br>')}</span>
+                </div>
+            
+            `;
+            container.appendChild(rezeptDiv);
+        }
     });
 }
 window.Laden = Laden;
@@ -154,4 +180,14 @@ function escapeHTML(str) {
     return str.replace(/[&<>'"]/g, 
         tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '\'', '"': '&quot;' }[tag] || tag)
     );
+}
+
+async function ZUBEREITUNG(event){
+    const angeklickteBox = event.currentTarget;
+    angeklickteBox.classList.toggle('visible');
+}
+
+async function LogOut(){
+    document.cookie = "loggedIN=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    window.location.replace("./index.html?");
 }

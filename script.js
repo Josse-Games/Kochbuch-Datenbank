@@ -1,5 +1,6 @@
 document.getElementById("SignIn").addEventListener("click", Check);
 document.getElementById("WEITER").addEventListener("click", Weiter);
+document.getElementById("benutzer-reset").addEventListener("click", ResetName);
 document.getElementById("Password").addEventListener('focus', () => {
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Enter') {
@@ -14,6 +15,12 @@ document.getElementById("nameField").addEventListener('focus', () => {
         }
     });
 });
+
+fetch("loginCHECK.php").then(response => {
+    if (response.ok){
+        window.location.href = "./Kochbuch.html";
+    }
+})
 
 
 async function Hash(NewPassword){
@@ -61,8 +68,6 @@ async function Check(){
         console.log(result);
 
         if (result.success) {
-            /*document.cookie = "loggedIN=1; path=/; SameSite=Lax; max-age=36;";*/
-            
             if(localStorage.getItem('Name') !== null){
                 fetch("loginSetCookie.php");
                 await new Promise(r => setTimeout(r, 800));
@@ -101,3 +106,8 @@ async function Weiter(){
 }
 
 window.Hash = Hash;
+
+async function ResetName(){
+    localStorage.removeItem('Name');
+    window.location.href = "./index.html";
+}
