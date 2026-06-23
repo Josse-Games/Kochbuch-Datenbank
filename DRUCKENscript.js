@@ -19,10 +19,10 @@ function Laden(){
                 
                 document.getElementById("searchInput").addEventListener("input", function() {
                     const aktuellerSuchText = this.value;
-                    Anzeigen(data.data, aktuellerSuchText);
+                    updatePreview(data.data, aktuellerSuchText);
                 });
             }
-            Anzeigen(data.data, ""); 
+            updatePreview(data.data);
         } else {
             console.error('Fehler vom Server:', data.message);
         }
@@ -87,4 +87,101 @@ async function ZUBEREITUNG(event){
 async function LogOut(){
     document.cookie = "loggedIN=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     window.location.replace("./index.html?");
+}
+
+let pdfDataUri;
+
+async function generatePdfDoc(rezepte) {
+    const { layoutMultilineText } = PDFLib;
+    const { PDFDocument, StandardFonts, rgb } = PDFLib;
+
+    const existingPdfBytes = await fetch('./PDF/Rezeptkarte_Pfadi-Kochbuch.pdf').then(res => res.arrayBuffer());
+    const pdfDoc = await PDFDocument.load(existingPdfBytes);
+
+    const pages = pdfDoc.getPages();
+
+    /*const fontBytes = await fetch('COOPBL.TTF').then(res => res.arrayBuffer());
+    pdfDoc.registerFontkit(fontkit);*/
+    const timesRomanFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+    for (const rezept of rezepte) {
+        const [copiedPage] = await pdfDoc.copyPages(pdfDoc, [0]);
+        const firstPage = pdfDoc.addPage(copiedPage);
+
+        const { height, width } = firstPage.getSize();
+        
+        firstPage.drawText(rezept.Rezeptname, {
+            x: 195,
+            y: height - 62,
+            size: 11,
+            font: timesRomanFont,
+            color: rgb(0, 0, 0)
+        });
+
+        let zutatenText = String(rezept.Zutaten);
+
+            // Alle Kommas durch Zeilenumbrüche ersetzen
+            zutatenText = zutatenText.replace(/,/g, '\n');
+
+            const zutatenX = 40;          // Linker Rand für die Zutatenliste
+            const zutatenYStart = height - 203; // Start-Höhe für die erste Zutat (Anpassen nach Wunsch!)
+            const zutatenSize = 9;        // Etwas kleinere Schriftgröße für die Zutaten
+
+            // layoutMultilineText erkennt die '\n' und trennt den Text in einzelne Zeilen auf
+            const multiZutaten = layoutMultilineText(zutatenText, {
+                font: timesRomanFont,
+                fontSize: zutatenSize,
+                bounds: { width: width - zutatenX - 40, height: 400 },
+            });
+
+            // Jede Zutat als eigene Zeile untereinander schreiben
+            multiZutaten.lines.forEach((line, index) => {
+                firstPage.drawText(line.text.trim(), { // .trim() entfernt eventuelle Leerzeichen nach dem Komma
+                    x: zutatenX,
+                    y: zutatenYStart - (index * (zutatenSize * 1.87)),
+                    size: zutatenSize,
+                    font: timesRomanFont,
+                    color: rgb(0, 0, 0),
+                });
+            });
+    }
+
+    //erste Seite entfernen
+    if (pdfDoc.getPageCount() > 1) {
+        pdfDoc.removePage(0);
+    }
+
+    return pdfDoc;
+}
+
+async function updatePreview(rezepte) {
+    
+    const pdfDoc = await generatePdfDoc(rezepte);
+    pdfDataUri = await pdfDoc.saveAsBase64({ dataUri: true });
+
+    // 1. Data-URI in Blob umwandeln
+    const base64Data = pdfDataUri.split(',')[1];
+    const byteCharacters = atob(base64Data);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+    // 2. Blob-URL erstellen
+    const blobUrl = URL.createObjectURL(blob);
+
+    // 3. Zuweisen
+    const iframe = document.getElementById('pdfPreview');
+    iframe.src = blobUrl;
+}
+
+async function Download() {
+    const link = document.createElement('a');
+    link.href = pdfDataUri;
+    link.download = document.getElementById('gerichtInput').value;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }

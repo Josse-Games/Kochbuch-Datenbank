@@ -21,16 +21,18 @@ async function Visibility(){
 }
 
 async function ZutatHinzufügen() {
-    Zutaten++;
+    if(Zutaten < 23){
+        Zutaten++;
 
-    const NEUEzutat = document.createElement("input");
+        const NEUEzutat = document.createElement("input");
 
-    NEUEzutat.type = "text";
-    NEUEzutat.name = "Zutat" + Zutaten;
-    NEUEzutat.placeholder = "Zutat " + Zutaten;
-    NEUEzutat.className = "zutat-input";
-    NEUEzutat.id = "Zutat" + Zutaten;
-    document.getElementById("zut-list").appendChild(NEUEzutat);
+        NEUEzutat.type = "text";
+        NEUEzutat.name = "Zutat" + Zutaten;
+        NEUEzutat.placeholder = "Zutat " + Zutaten;
+        NEUEzutat.className = "zutat-input";
+        NEUEzutat.id = "Zutat" + Zutaten;
+        document.getElementById("zut-list").appendChild(NEUEzutat);
+    }
 }
 
 async function ZutatEntfernen() {

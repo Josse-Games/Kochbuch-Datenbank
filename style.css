@@ -598,6 +598,14 @@ div.header button:active{
     font-size: 1em;
 }
 
+#pdfPreview{
+    display: flex;
+    position: fixed;
+    height: calc(100% - 3.5em);
+    width: 100%;
+    z-index: 999999999;
+    top: 3.5em;
+}
 
 @keyframes PasswortFalsch {
   0% {
