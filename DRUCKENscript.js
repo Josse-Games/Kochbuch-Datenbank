@@ -3,6 +3,8 @@ document.getElementById("Ausloggen").addEventListener("click", LogOut);
 Laden();
 
 function Laden(){
+    let debounceTimer;
+
     fetch('rezeptAnzeigen.php')
     .then(response => {
         if (!response.ok) {
@@ -19,7 +21,10 @@ function Laden(){
                 
                 document.getElementById("searchInput").addEventListener("input", function() {
                     const aktuellerSuchText = this.value;
-                    updatePreview(data.data, aktuellerSuchText);
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => {
+                        updatePreview(data.data, aktuellerSuchText);
+                    }, 800);
                 });
             }
             updatePreview(data.data);
@@ -91,59 +96,144 @@ async function LogOut(){
 
 let pdfDataUri;
 
-async function generatePdfDoc(rezepte) {
+async function generatePdfDoc(rezepte, suchBegriff="") {
+    const suchText = suchBegriff.toLowerCase().trim();
+    console.log(suchText);
+
     const { layoutMultilineText } = PDFLib;
     const { PDFDocument, StandardFonts, rgb } = PDFLib;
 
-    const existingPdfBytes = await fetch('./PDF/Rezeptkarte_Pfadi-Kochbuch.pdf').then(res => res.arrayBuffer());
+    const existingPdfBytes = await fetch('./PDF/Rezeptkarte_Pfadi-Kochbuch_geglättet.pdf').then(res => res.arrayBuffer());
     const pdfDoc = await PDFDocument.load(existingPdfBytes);
 
     const pages = pdfDoc.getPages();
 
-    /*const fontBytes = await fetch('COOPBL.TTF').then(res => res.arrayBuffer());
-    pdfDoc.registerFontkit(fontkit);*/
-    const timesRomanFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const fontBytes = await fetch('HelveticaNeue.ttf').then(res => res.arrayBuffer());
+    const fontBytes2 = await fetch('HEB____.TTF').then(res => res.arrayBuffer());
+    pdfDoc.registerFontkit(fontkit);
+    const Font = await pdfDoc.embedFont(fontBytes);
+    const Font2 = await pdfDoc.embedFont(fontBytes2);
+    /*const Font = await pdfDoc.embedFont(StandardFonts.Helvetica);*/
 
     for (const rezept of rezepte) {
-        const [copiedPage] = await pdfDoc.copyPages(pdfDoc, [0]);
-        const firstPage = pdfDoc.addPage(copiedPage);
-
-        const { height, width } = firstPage.getSize();
+        const namePasst = rezept.Rezeptname ? rezept.Rezeptname.toLowerCase().includes(suchText) : false;
+        const zutatPasst = rezept.Zutaten ? rezept.Zutaten.toLowerCase().includes(suchText) : false;
+        const erstellerPasst = rezept.Ersteller ? rezept.Ersteller.toLowerCase().includes(suchText) : false;
+        const schwierigkeitPasst = rezept.Schwierigkeit ? rezept.Schwierigkeit.toLowerCase().includes(suchText) : false;
         
-        firstPage.drawText(rezept.Rezeptname, {
-            x: 195,
-            y: height - 62,
-            size: 11,
-            font: timesRomanFont,
-            color: rgb(0, 0, 0)
-        });
+        if (suchText === "" || namePasst || zutatPasst || erstellerPasst || schwierigkeitPasst) {
+            const [copiedPage] = await pdfDoc.copyPages(pdfDoc, [0]);
+            const firstPage = pdfDoc.addPage(copiedPage);
 
-        let zutatenText = String(rezept.Zutaten);
-
-            // Alle Kommas durch Zeilenumbrüche ersetzen
-            zutatenText = zutatenText.replace(/,/g, '\n');
-
-            const zutatenX = 40;          // Linker Rand für die Zutatenliste
-            const zutatenYStart = height - 203; // Start-Höhe für die erste Zutat (Anpassen nach Wunsch!)
-            const zutatenSize = 9;        // Etwas kleinere Schriftgröße für die Zutaten
-
-            // layoutMultilineText erkennt die '\n' und trennt den Text in einzelne Zeilen auf
-            const multiZutaten = layoutMultilineText(zutatenText, {
-                font: timesRomanFont,
-                fontSize: zutatenSize,
-                bounds: { width: width - zutatenX - 40, height: 400 },
+            const { height, width } = firstPage.getSize();
+        
+            firstPage.drawText(rezept.Rezeptname, {
+                x: 195,
+                y: height - 62,
+                size: 10,
+                font: Font2,
+                color: rgb(0, 0, 0)
             });
 
-            // Jede Zutat als eigene Zeile untereinander schreiben
-            multiZutaten.lines.forEach((line, index) => {
-                firstPage.drawText(line.text.trim(), { // .trim() entfernt eventuelle Leerzeichen nach dem Komma
-                    x: zutatenX,
-                    y: zutatenYStart - (index * (zutatenSize * 1.87)),
-                    size: zutatenSize,
-                    font: timesRomanFont,
+            firstPage.drawText(rezept.Dauer, {
+                x: 183,
+                y: height - 140,
+                size: 9,
+                font: Font,
+                color: rgb(0, 0, 0),
+            });
+
+            firstPage.drawText(rezept.Personenanzahl, {
+                x: 310,
+                y: height - 140,
+                size: 9,
+                font: Font,
+                color: rgb(0, 0, 0),
+            });
+
+            if(rezept.Schwierigkeit == "Einfach"){
+                firstPage.drawText("*", {
+                    x: 248.5,
+                    y: height - 102.5,
+                    size: 25,
+                    font: Font,
                     color: rgb(0, 0, 0),
                 });
-            });
+            }
+            else if(rezept.Schwierigkeit == "Mittel"){
+                firstPage.drawText("*", {
+                    x: 298,
+                    y: height - 102,
+                    size: 25,
+                    font: Font,
+                    color: rgb(0, 0, 0),
+                });
+            }
+            else if(rezept.Schwierigkeit == "Schwer"){
+                firstPage.drawText("*", {
+                    x: 345,
+                    y: height - 102.5,
+                    size: 25,
+                    font: Font,
+                    color: rgb(0, 0, 0),
+                });
+            }
+
+            let zutatenText = String(rezept.Zutaten);
+
+                // Alle Kommas durch Zeilenumbrüche ersetzen
+                zutatenText = zutatenText.replace(/,/g, '\n');
+
+                const zutatenX = 40;
+                const zutatenYStart = height - 203;
+                const zutatenSize = 6.5;
+
+                // layoutMultilineText erkennt die '\n' und trennt den Text in einzelne Zeilen auf
+                const multiZutaten = layoutMultilineText(zutatenText, {
+                    font: Font,
+                    fontSize: zutatenSize,
+                    bounds: { width: width - zutatenX - 40, height: 400 },
+                });
+
+                // Jede Zutat als eigene Zeile untereinander schreiben
+                multiZutaten.lines.forEach((line, index) => {
+                    firstPage.drawText(line.text.trim(), { // .trim() entfernt eventuelle Leerzeichen nach dem Komma
+                        x: zutatenX,
+                        y: zutatenYStart - (index * (zutatenSize * 2.589230769)),
+                        size: zutatenSize,
+                        font: Font,
+                        color: rgb(0, 0, 0),
+                    });
+                });
+
+
+            let zubereitungText = String(rezept.Rezept);
+
+                const textX = 155;
+                const textYStart = height - 203;
+                const textSize = 6.5;
+
+                const maxTextWidth = width - textX - 20;
+
+                // Verarbeitet bestehende \n UND bricht zu lange Zeilen automatisch bei maxTextWidth um
+                const multiZubereitung = layoutMultilineText(zubereitungText, {
+                    font: Font,
+                    fontSize: textSize,
+                    bounds: { width: maxTextWidth, height: 600 },
+                });
+
+                // Zeilen weise auf das PDF schreiben
+                multiZubereitung.lines.forEach((line, index) => {
+                    firstPage.drawText(line.text, {
+                        x: textX,
+                        y: textYStart - (index * (textSize * 2.589230769)),
+                        size: textSize,
+                        font: Font,
+                        color: rgb(0, 0, 0),
+                    });
+                });
+        
+        }
     }
 
     //erste Seite entfernen
@@ -154,9 +244,9 @@ async function generatePdfDoc(rezepte) {
     return pdfDoc;
 }
 
-async function updatePreview(rezepte) {
+async function updatePreview(rezepte, suchBegriff) {
     
-    const pdfDoc = await generatePdfDoc(rezepte);
+    const pdfDoc = await generatePdfDoc(rezepte, suchBegriff);
     pdfDataUri = await pdfDoc.saveAsBase64({ dataUri: true });
 
     // 1. Data-URI in Blob umwandeln

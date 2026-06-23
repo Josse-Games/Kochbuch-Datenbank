@@ -606,6 +606,15 @@ div.header button:active{
     z-index: 999999999;
     top: 3.5em;
 }
+@media(max-width: 1080px) {
+    #pdfPreview{
+        display: flex;
+        position: fixed;
+        width: 100%;
+        height: calc(100% - 5.5em);
+        top: 5.5em;
+    }
+}
 
 @keyframes PasswortFalsch {
   0% {
