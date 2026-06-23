@@ -1,4 +1,5 @@
 document.getElementById("Name").textContent = localStorage.getItem("Name");
+document.getElementById("druckButton").addEventListener("click", Drucken);
 document.getElementById("addButton").addEventListener("click", Visibility);
 document.getElementById("backButton").addEventListener("click", Visibility);
 document.getElementById("zutatHINZF").addEventListener("click", ZutatHinzufügen);
@@ -18,6 +19,10 @@ async function Visibility(){
         document.getElementById("BLUR").classList.remove("visible");
         VISIBLE = false;
     }
+}
+
+async function Drucken(){
+    window.location.href = "./Drucken.html";
 }
 
 async function ZutatHinzufügen() {

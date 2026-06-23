@@ -268,6 +268,37 @@ div.header button:active{
     }
 }
 
+#ButtonDIV{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-left: auto;
+    margin-top: auto;
+}
+
+#druckButton{
+    height: 2.2em;
+    width: 2.2em;
+    background-color: rgb(70, 70, 70);
+    border: 0px;
+    z-index: 99999999;
+    border-radius: 20px;
+    color: white;
+    font-size: 2em;
+    margin-bottom: 0.5em;
+    margin-top: auto;
+    margin-right: 1.2em;
+    margin-left: auto;
+    text-align: center;
+    transition: all 0.03s ease-in-out;
+}
+#druckButton:hover{
+    scale: 1.1;
+}
+#druckButton:active{
+    scale: 0.9;
+}
+
 #addButton{
     height: 2.2em;
     width: 2.2em;
@@ -278,7 +309,6 @@ div.header button:active{
     color: white;
     font-size: 2em;
     margin-bottom: 1.5em;
-    margin-top: auto;
     margin-right: 1.2em;
     margin-left: auto;
     text-align: center;
