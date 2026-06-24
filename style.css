@@ -633,7 +633,7 @@ div.header button:active{
     position: fixed;
     height: calc(100% - 3.5em);
     width: 100%;
-    z-index: 999999999;
+    z-index: 9999999;
     top: 3.5em;
 }
 @media(max-width: 1080px) {

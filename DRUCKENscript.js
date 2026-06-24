@@ -1,6 +1,12 @@
 document.getElementById("Name").textContent = localStorage.getItem("Name");
 document.getElementById("Ausloggen").addEventListener("click", LogOut);
+document.getElementById("druckButton").addEventListener("click", Back);
+document.getElementById("addButton").addEventListener("click", Download);
 Laden();
+
+async function Back(){
+    window.location.href = "./Kochbuch.html";
+}
 
 function Laden(){
     let debounceTimer;
@@ -270,7 +276,7 @@ async function updatePreview(rezepte, suchBegriff) {
 async function Download() {
     const link = document.createElement('a');
     link.href = pdfDataUri;
-    link.download = document.getElementById('gerichtInput').value;
+    link.download = "Pfadi-Kochbuch Ausdruck";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
