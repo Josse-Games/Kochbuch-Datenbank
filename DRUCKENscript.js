@@ -42,45 +42,6 @@ function Laden(){
         console.error('Netzwerkfehler beim Laden:', error);
     });
 }
-
-function Anzeigen(rezepte, suchBegriff=""){
-    const container = document.getElementById('AnzeigeRezepte');
-    container.innerHTML = '';
-
-    if (rezepte.length === 0) {
-        container.innerHTML = '';
-        return;
-    }
-    
-    const suchText = suchBegriff.toLowerCase().trim();
-    
-    rezepte.forEach(rezept => {
-        const namePasst = rezept.Rezeptname ? rezept.Rezeptname.toLowerCase().includes(suchText) : false;
-        const zutatPasst = rezept.Zutaten ? rezept.Zutaten.toLowerCase().includes(suchText) : false;
-        const erstellerPasst = rezept.Ersteller ? rezept.Ersteller.toLowerCase().includes(suchText) : false;
-        const schwierigkeitPasst = rezept.Schwierigkeit ? rezept.Schwierigkeit.toLowerCase().includes(suchText) : false;
-
-        if (suchText === "" || namePasst || zutatPasst || erstellerPasst || schwierigkeitPasst) {
-            const rezeptDiv = document.createElement('div');
-            rezeptDiv.className = 'rezeptKarte';
-            rezeptDiv.addEventListener("click", ZUBEREITUNG);
-
-            rezeptDiv.innerHTML = `
-                <span class="TITEL"><strong>${escapeHTML(rezept.Rezeptname)}</strong></span>
-                <span><strong>Schwierigkeit:</strong> ${escapeHTML(rezept.Schwierigkeit)}</span>
-                <span><strong>Dauer:</strong> ${escapeHTML(rezept.Dauer)}</span>
-                <span><strong>Personen:</strong> ${parseInt(rezept.Personenanzahl)}</span>
-                <span><strong>Ersteller:</strong> ${escapeHTML(rezept.Ersteller)}</span>
-                <div class="REZEPT">
-                    <span><strong>Zutaten:</strong> ${escapeHTML(rezept.Zutaten)}</span>
-                    <span><strong>Zubereitung:</strong><br>${escapeHTML(rezept.Rezept).replace(/\n/g, '<br>')}</span>
-                </div>
-            
-            `;
-            container.appendChild(rezeptDiv);
-        }
-    });
-}
 window.Laden = Laden;
 
 function escapeHTML(str) {
