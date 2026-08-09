@@ -1,4 +1,5 @@
 document.getElementById("Name").textContent = localStorage.getItem("Name");
+document.getElementById("planButton").addEventListener("click", Planen);
 document.getElementById("druckButton").addEventListener("click", Drucken);
 document.getElementById("addButton").addEventListener("click", Visibility);
 document.getElementById("backButton").addEventListener("click", Visibility);
@@ -21,6 +22,9 @@ async function Visibility(){
     }
 }
 
+async function Planen(){
+    window.location.href = "./Planung.html";
+}
 async function Drucken(){
     window.location.href = "./Drucken.html";
 }
