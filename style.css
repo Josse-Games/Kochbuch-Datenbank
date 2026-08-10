@@ -350,7 +350,7 @@ div.header button:active{
 #backButton{
     height: 2.2em;
     width: 2.2em;
-    background-color: rgb(70, 70, 70);
+    background-color: rgb(55, 55, 55);
     border: 0px;
     z-index: 99999999;
     border-radius: 20px;
@@ -735,6 +735,45 @@ div.header button:active{
         height: calc(100% - 5.5em);
         top: 5.5em;
     }
+}
+
+#tage-list{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.tag-inputWINDOW{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    height: 21em;
+    background-color: rgba(0, 0, 0, 0.552);
+    width: 90%;
+    border-radius: 25px;
+    border: 0px;
+    margin-bottom: 1.2em;
+    margin-top: 0.8em;
+}
+
+.tag-inputWINDOW-Headline{
+    color: white;
+    font-size: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: bolder;
+    padding-left: 1em;
+}
+
+.tag-inputWINDOW-Add{
+    width: 90%;
+    height: 3em;
+    background-color: rgb(45, 45, 45);
+    border-radius: 10px;
+    border: 0px;
+    color: white;
+    margin-bottom: 1.2em;
+    padding-left: 1em;
 }
 
 @keyframes PasswortFalsch {
