@@ -672,7 +672,8 @@ div.header button:active{
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: white;
     width: 80%;
-    background-color: rgb(68, 82, 67);
+    background-color: rgb(70, 70, 70);
+    /*background-color: rgb(68, 82, 67);*/
     padding-left: 1.5em;
     padding-right: 1.5em;
     padding-bottom: 1.5em;
@@ -686,7 +687,8 @@ div.header button:active{
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         color: white;
         width: 80%;
-        background-color: rgb(68, 82, 67);
+        background-color: rgb(70, 70, 70);
+        /*background-color: rgb(68, 82, 67);*/
         padding-left: 1.5em;
         padding-right: 1.5em;
         padding-bottom: 1.5em;
@@ -711,9 +713,14 @@ div.header button:active{
     flex-wrap: wrap;
     font-size: 0em;
     transition: all 0.1s ease-in-out;
+    background-color: rgba(0, 0, 0, 0.552);
+    border-radius: 25px;
+    margin-top: 1em;
 }
 .rezeptKarte .REZEPT span{
     margin-top: 1em;
+    margin-bottom: 1em;
+    margin-left: 1em;
 }
 .rezeptKarte.visible .REZEPT{
     font-size: 1em;

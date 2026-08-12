@@ -14,10 +14,10 @@ if (empty($enteredPassword)) {
     exit;
 }
 
-$salt = "c5ae78705c1d94be8ecd8931e55f29d2";
+$salt = "61be90496ef5e0dbec0755c678e6dea7";
 $saltBytes = hex2bin($salt);
 
-$passwordHASH = "ed2068fa9d3063f3b964677ac4236b2d4f15d1bccc21028b7aeadfddc9cc3bd568fe9fb344d735c81c517af02421194cc11fbf1d485ad36529a3643061eebad0";
+$passwordHASH = "ac364ec2f6f44a130257aade473cb6aac7e0bac80bcda3203ed1b2d11a38fd4c1e554ba571dfa8f15226fb9cbb1e0e706358f3441f2569384e104084e70c1632";
 $passwordBytes = hex2bin($passwordHASH);
 
 $hash = hash_pbkdf2("sha512", $enteredPassword, $saltBytes, 100000, 64, true);
