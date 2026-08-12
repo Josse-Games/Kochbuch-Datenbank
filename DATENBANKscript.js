@@ -79,7 +79,7 @@ function Save() {
         schwierigkeit: schwierigkeit,
         dauer: RezeptDauer,
         personen: RezeptPersonen,
-        zutaten: zutatenArray.join(', '),
+        zutaten: zutatenArray.join('; '),
         text: Rezept,
         ersteller: localStorage.getItem("Name")
     };

@@ -149,7 +149,7 @@ async function generatePdfDoc(rezepte, suchBegriff="") {
             let zutatenText = String(rezept.Zutaten);
 
                 // Alle Kommas durch Zeilenumbrüche ersetzen
-                zutatenText = zutatenText.replace(/,/g, '\n');
+                zutatenText = zutatenText.replace(/;/g, '\n');
 
                 const zutatenX = 40;
                 const zutatenYStart = height - 203;
