@@ -534,6 +534,12 @@ div.header button:active{
     margin-left: 5%;
 }
 
+#Zutatenerklärung{
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin-left: 1em;
+}
+
 #zut-list{
     width: 100%;
     height: fit-content;
