@@ -282,7 +282,7 @@ div.header button:active{
 #planButton{
     height: 2.2em;
     width: 2.2em;
-    background-color: rgb(70, 70, 70);
+    background-color: rgb(55, 55, 55);
     border: 0px;
     z-index: 99999999;
     border-radius: 20px;
@@ -305,7 +305,7 @@ div.header button:active{
 #druckButton{
     height: 2.2em;
     width: 2.2em;
-    background-color: rgb(70, 70, 70);
+    background-color: rgb(55, 55, 55);
     border: 0px;
     z-index: 99999999;
     border-radius: 20px;
@@ -328,7 +328,7 @@ div.header button:active{
 #addButton{
     height: 2.2em;
     width: 2.2em;
-    background-color: rgb(70, 70, 70);
+    background-color: rgb(55, 55, 55);
     border: 0px;
     z-index: 99999999;
     border-radius: 20px;
