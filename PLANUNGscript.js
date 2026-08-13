@@ -299,10 +299,8 @@ function Anzeigen(Planung){
         let essensinfoHTML = "";
         
         if (plan.essensinfo) {
-            // 1. String an jedem '#' teilen, um die einzelnen Tage zu bekommen
             const tage = plan.essensinfo.split("#");
             
-            // 2. Jeden Tag durchlaufen und an jedem '|' in die 4 Werte teilen
             tage.forEach((tagSpur, index) => {
                 const mahlzeiten = tagSpur.split("|");
                 
@@ -311,13 +309,14 @@ function Anzeigen(Planung){
                 const abends    = mahlzeiten[2] || "-";
                 const sonstiges = mahlzeiten[3] || "-";
                 
-                // HTML-Text für diesen einen Tag zusammenbauen
                 essensinfoHTML += `
-                    <strong>Tag ${index + 1}:</strong><br>
-                    Morgens: ${escapeHTML(morgens)}<br>
-                    Mittags: ${escapeHTML(mittags)}<br>
-                    Abends: ${escapeHTML(abends)}<br>
-                    Sonstiges: ${escapeHTML(sonstiges)}<br><br>
+                    <div class="tag-box">
+                        <strong>Tag ${index + 1}</strong>
+                        <p>MORGENS 🌄: ${escapeHTML(morgens)}</p>
+                        <p>MITTAGS 😎: ${escapeHTML(mittags)}</p>
+                        <p>ABENDS 🌒: ${escapeHTML(abends)}</p>
+                        <p>Sonstiges 📝: <em>${escapeHTML(sonstiges)}</em></p>
+                    </div>
                 `;
             });
         } else {
@@ -328,7 +327,9 @@ function Anzeigen(Planung){
             <span class="TITEL"><strong>${escapeHTML(plan.name)}</strong></span>
             <span><strong>Personen:</strong> ${parseInt(plan.personenanzahl)}</span>
             <div class="REZEPT">
-                <span><strong>Zubereitung:</strong><br>${essensinfoHTML}</span>
+                <div class="tage-container">
+                    ${essensinfoHTML}
+                </div>
             </div>
             
         `;
