@@ -6,8 +6,10 @@ document.getElementById("druckButton").addEventListener("click", Back);
 document.getElementById("Tage").addEventListener("click", Tage);
 document.getElementById("Tage").addEventListener("input", Tage);
 
+document.getElementById("saveButton").addEventListener("click", Save);
 document.getElementById("Ausloggen").addEventListener("click", LogOut);
 Laden();
+Laden2()
 
 let VISIBLE = false;
 let TageAnz = 0;
@@ -59,6 +61,38 @@ function Laden(){
             }
             //Anzeigen(data.data, ""); 
             rezepte = data.data;
+        } else {
+            console.error('Fehler vom Server:', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Netzwerkfehler beim Laden:', error);
+    });
+}
+
+function Laden2(){
+    fetch('planungAnzeigen.php')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Server-Antwort war nicht okay');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            const suchFeld = document.getElementById("searchInput");
+            
+            if (suchFeld) {
+                suchFeld.replaceWith(suchFeld.cloneNode(true));
+                
+                document.getElementById("searchInput").addEventListener("input", function() {
+                    const aktuellerSuchText = this.value;
+                    //Anzeigen(data.data, aktuellerSuchText); 
+                    Planung = data.data;
+                });
+            }
+            Anzeigen(data.data); 
+            Planung = data.data;
         } else {
             console.error('Fehler vom Server:', data.message);
         }
@@ -162,13 +196,148 @@ async function Tage() {
                         }
                     });
         
-                const Add4 = document.createElement("div");
-                Add4.className = "tag-inputWINDOW-Add";
+                const Add4 = document.createElement("textarea");
+                Add4.className = "tag-inputWINDOW-Else";
                 Add4.id = "tag-inputWINDOW-Add4" + aktuellerTag;
+                Add4.spellcheck = true;
+                Add4.placeholder = "Sonstiges... (Zutaten mit ';' trennen)";
                 hinterGRND.appendChild(Add4);
 
             aktuellerTag = aktuellerTag + 1;
         }
     }
     
+}
+
+function Save() {
+    const Bezeichnung = document.getElementById("UnternehmenName").value;
+    const Personenanzahl = document.getElementById("TeilnehmerAnzahl").value;
+    
+    const TageAnz = parseInt(document.getElementById("Tage").value) || 0;
+    let alleTageArray = [];
+
+    for (let i = 1; i <= TageAnz; i++) {
+        const morgens    = document.getElementById("tag-inputWINDOW-Add1" + i)?.value || "";
+        const mittags    = document.getElementById("tag-inputWINDOW-Add2" + i)?.value || "";
+        const abends     = document.getElementById("tag-inputWINDOW-Add3" + i)?.value || "";
+        const sonstiges  = document.getElementById("tag-inputWINDOW-Add4" + i)?.value || "";
+
+        
+        const tagString = morgens + "|" + mittags + "|" + abends + "|" + sonstiges;
+    
+        alleTageArray.push(tagString);
+    }
+
+    const Essensinfo = alleTageArray.join("#");
+    //console.log(Essensinfo);
+
+    if (!Bezeichnung.trim()) {
+        alert('Bitte tragen Sie mindestens eine Bezeichnung ein');
+        return;
+    }
+
+    const planungDaten = {
+        name: Bezeichnung,
+        personenanzahl: Personenanzahl,
+        essensinfo: Essensinfo
+    };
+
+    fetch('planungSpeichern.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(planungDaten)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            console.log('Rezept erfolgreich gespeichert!');
+            Laden();
+            
+            document.getElementById('RezeptName').value = '';
+            document.getElementById('RezeptDauer').value = '';
+            document.getElementById('RezeptPersonen').value = '';
+            document.getElementById('Rezept').value = '';
+            document.getElementById('zut-list').innerHTML = '';
+            Zutaten = 0;
+        } else {
+            console.log('Fehler beim Speichern: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Netzwerkfehler:', error);
+        console.log('Verbindung zum Server fehlgeschlagen.');
+    });
+
+    Visibility();
+}
+window.Save = Save;
+
+function escapeHTML(str) {
+    if (!str) return '';
+    return str.replace(/[&<>'"]/g, 
+        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '\'', '"': '&quot;' }[tag] || tag)
+    );
+}
+
+function Anzeigen(Planung){
+    const container = document.getElementById('AnzeigePlanung');
+    container.innerHTML = '';
+
+    if (Planung.length === 0) {
+        container.innerHTML = '';
+        return;
+    }
+    
+    
+    Planung.forEach(plan => {
+        const planDiv = document.createElement('div');
+        planDiv.className = 'planKarte';
+        planDiv.addEventListener("click", UNFOLD);
+
+        let essensinfoHTML = "";
+        
+        if (plan.essensinfo) {
+            // 1. String an jedem '#' teilen, um die einzelnen Tage zu bekommen
+            const tage = plan.essensinfo.split("#");
+            
+            // 2. Jeden Tag durchlaufen und an jedem '|' in die 4 Werte teilen
+            tage.forEach((tagSpur, index) => {
+                const mahlzeiten = tagSpur.split("|");
+                
+                const morgens   = mahlzeiten[0] || "-";
+                const mittags   = mahlzeiten[1] || "-";
+                const abends    = mahlzeiten[2] || "-";
+                const sonstiges = mahlzeiten[3] || "-";
+                
+                // HTML-Text für diesen einen Tag zusammenbauen
+                essensinfoHTML += `
+                    <strong>Tag ${index + 1}:</strong><br>
+                    Morgens: ${escapeHTML(morgens)}<br>
+                    Mittags: ${escapeHTML(mittags)}<br>
+                    Abends: ${escapeHTML(abends)}<br>
+                    Sonstiges: ${escapeHTML(sonstiges)}<br><br>
+                `;
+            });
+        } else {
+            essensinfoHTML = "-";
+        }
+
+        planDiv.innerHTML = `
+            <span class="TITEL"><strong>${escapeHTML(plan.name)}</strong></span>
+            <span><strong>Personen:</strong> ${parseInt(plan.personenanzahl)}</span>
+            <div class="REZEPT">
+                <span><strong>Zubereitung:</strong><br>${essensinfoHTML}</span>
+            </div>
+            
+        `;
+        container.appendChild(planDiv);
+        
+    });
+}
+
+async function UNFOLD(event){
+    const angeklickteBox = event.currentTarget;
+    angeklickteBox.classList.toggle('visible');
 }
