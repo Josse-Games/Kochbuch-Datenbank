@@ -910,10 +910,13 @@ div.header button:active{
     margin-bottom: 1em;
     margin-left: 1em;
     margin-right: 1em;
+    width: calc(100% - 2em);
 }
 
 .planKarte.visible .tag-box {
     min-width: calc(25% - 0.75em);
+    max-width: 100%;
+    overflow-wrap: break-word;
     height: fit-content;
     background-color: rgb(45, 45, 45);
     border-radius: 10px;
@@ -922,12 +925,13 @@ div.header button:active{
 }
 @media(max-width: 1080px) {
     .planKarte.visible .tag-box {
-    min-width: 100%;
-    height: fit-content;
-    background-color: rgb(45, 45, 45);
-    border-radius: 10px;
-    padding: 1em;
-    box-sizing: border-box;
+        width: 100%;
+        overflow-wrap: break-word;
+        height: fit-content;
+        background-color: rgb(45, 45, 45);
+        border-radius: 10px;
+        padding: 1em;
+        box-sizing: border-box;
     }
 }
 
